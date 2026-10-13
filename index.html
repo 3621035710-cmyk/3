@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f2f2f7">
+<title>恋爱载入中... · k1ty</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f2f2f7;
+    --card: #ffffff;
+    --text: #1c1c1e;
+    --text2: #8e8e93;
+    --text3: #c7c7cc;
+    --line: #e5e5ea;
+    --pink: #f2a6c2;
+    --pink-deep: #e07aa5;
+    --pink-pale: #fff5fa;
+    --radius: 14px;
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    background: #cfcfd6;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .app {
+    width: min(100%, 420px);
+    height: min(100vh, 880px);
+    background: var(--bg);
+    border-radius: 28px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.22);
+  }
+
+  /* ============ 顶栏 ============ */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px 8px;
+    flex: 0 0 auto;
+    z-index: 5;
+  }
+
+  .topbar-close {
+    width: 30px; height: 30px;
+    display: grid; place-items: center;
+    border: none; background: transparent;
+    color: var(--text2); font-size: 18px;
+    cursor: pointer; border-radius: 50%;
+    transition: background 0.15s;
+  }
+  .topbar-close:active { background: rgba(0,0,0,0.06); }
+
+  .page-indicator {
+    font-size: 14px; color: var(--text2);
+    font-weight: 500; letter-spacing: 0.02em;
+  }
+
+  /* ============ 页面容器 ============ */
+  .viewport {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 4px 0 16px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  .viewport::-webkit-scrollbar { width: 0; }
+
+  .page {
+    display: none;
+    padding: 2px 0 12px;
+    animation: pageIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .page.active { display: block; }
+
+  @keyframes pageIn {
+    from { opacity: 0; transform: translateX(14px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ============ 通用卡片 ============ */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    margin: 0 14px 12px;
+    overflow: hidden;
+  }
+
+  .section-title {
+    padding: 16px 20px 7px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    letter-spacing: 0.03em;
+  }
+
+  /* ============ 个人资料 ============ */
+  .profile-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 18px;
+    margin-top: 4px;
+  }
+
+  .avatar {
+    flex: 0 0 68px;
+    width: 68px; height: 68px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #fafafa 0%, #ececf0 100%);
+    display: grid; place-items: center;
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .avatar svg { width: 54px; height: 54px; display: block; }
+
+  .profile-info { flex: 1; min-width: 0; }
+
+  .profile-name {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    color: var(--text);
+  }
+
+  .profile-sub {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 3px;
+    line-height: 1.45;
+  }
+
+  .profile-arrow {
+    flex: 0 0 auto;
+    color: var(--text3);
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  /* ============ 信息行 ============ */
+  .info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .info-row:last-child { border-bottom: none; }
+
+  .info-label {
+    font-size: 14px;
+    color: var(--text2);
+    flex: 0 0 auto;
+  }
+
+  .info-value {
+    font-size: 14px;
+    color: var(--text);
+    text-align: right;
+    font-weight: 500;
+  }
+
+  /* ============ 可编辑块 ============ */
+  .editable {
+    outline: none;
+    min-height: 26px;
+    padding: 13px 16px;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--text);
+    border-radius: 8px;
+    margin: 0;
+    transition: background 0.15s;
+  }
+  .editable:focus { background: var(--pink-pale); }
+  .editable:empty::before {
+    content: attr(data-placeholder);
+    color: var(--textpx3);
+  }
+
+  /* ============ 音乐;
+卡 ============ */
+  .music-card {
+       background: linear-gradient(140deg, # animationffd3e7 0%, #: spinf2a6c2 55%, #e07aa5 100%);
+    color: #fff;
+    padding: 20px 18px;
+    margin: 4px 14px 12px;
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+  .music-card::after {
+    content: "";
+    position: absolute;
+    top: -40px; right: -30px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+  }
+
+  .music-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .record {
+    flex: 0 0 54px;
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.22);
+    border: 2px solid rgba(255,255,255,0.5);
+    display: grid; place-items: center;
+    font-size: 22 8s linear infinite;
+    animation-play-state: paused;
+  }
+  .record.playing { animation-play-state: running; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .music-meta { flex: 1; min-width: 0; }
+
+  .music-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.2px;
+  }
+
+  .music-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.88);
+    margin-top: 3px;
+  }
+
+  .music-bar {
+    margin-top: 16px;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.3);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  .music-bar-fill {
+    width: 0%;
+    height: 100%;
+    background: #fff;
+    border-radius: 2px;
+    transition: width 0.3s linear;
+  }
+
+  .music-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    margin-top: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .m-btn {
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 19px;
+    cursor: pointer;
+    padding: 4px;
+    opacity: 0.9;
+    transition: opacity 0.15s, transform 0.1s;
+    line-height: 1;
+  }
+  .m-btn:active { transform: scale(0.9); opacity: 1; }
+
+  .m-btn-play {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.28);
+    display: grid; place-items: center;
+    font-size: 15px;
+  }
+
+  /* ============ Plan List ============ */
+  .plan-card {
+    background: #f7f7fa;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 16px 10px;
+    margin: 4px 14px 12px;
+  }
+
+  .plan-head {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 12px;
+  }
+
+  .plan-head-icon {
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    background: var(--pink-pale);
+    display: grid; place-items: center;
+    font-size: 13px;
+    color: var(--pink-deep);
+  }
+
+  .plan-head-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .plan-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .plan-check {
+    flex: 0 0 19px;
+    width: 19px; height: 19px;
+    border-radius: 50%;
+    border: 1.5px solid var(--text3);
+    display: grid; place-items: center;
+    font-size: 11px;
+    color: transparent;
+    transition: all 0.18s;
+  }
+
+  .plan-item.done .plan-check {
+    background: var(--pink);
+    border-color: var(--pink);
+    color: #fff;
+  }
+
+  .plan-text {
+    font-size: 14px;
+    color: var(--text2);
+    transition: color 0.18s;
+  }
+
+  .plan-item.done .plan-text {
+    color: var(--text3);
+    text-decoration: line-through;
+  }
+
+  /* ============ 邮件卡 ============ */
+  .mail-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 15px 16px;
+    margin: 4px 14px 12px;
+    background: var(--card);
+    border-radius: var(--radius);
+  }
+
+  .mail-icon {
+    flex: 0 0 40px;
+    width: 40px; height: 40px;
+    border-radius: 11px;
+    background: var(--pink-pale);
+    display: grid; place-items: center;
+    color: var(--pink-deep);
+    font-size: 17px;
+  }
+
+  .mail-body { flex: 1; min-width: 0; }
+
+  .mail-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .mail-desc {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 2px;
+  }
+
+  .mail-badge {
+    flex: 0 0 auto;
+    min-width: 20px; height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: #ff3b30;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    display: grid; place-items: center;
+  }
+
+  /* ============ 语录 ============ */
+  .quote-list { padding: 4px 0; }
+
+  .quote-item {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .quote-item:last-child { border-bottom: none; }
+
+  .quote-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* ============ 通知列表 ============ */
+  .notice-list { padding: 6px 0; }
+
+  .notice-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 16px;
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  .notice-dot {
+    flex: 0 0 6px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--pink);
+    margin-top: 8px;
+  }
+
+  /* ============ 旋律块 ============ */
+  .melody-block {
+    padding: 15px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .melody-block:last-child { border-bottom: none; }
+
+  .melody-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--pink-deep);
+    background: var(--pink-pale);
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    margin-bottom: 9px;
+  }
+
+  .melody-content {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.85;
+  }
+
+  /* ============ 状态环 ============ */
+  .ring-wrap {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px 18px;
+  }
+
+  .ring {
+    position: relative;
+    flex: 0 0 78px;
+    width: 78px; height: 78px;
+    border-radius: 50%;
+    background: conic-gradient(var(--pink) 0 75%, #ececf0 75% 100%);
+  }
+
+  .ring::after {
+    content: "75%";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--card);
+    display: grid; place-items: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--pink-deep);
+  }
+
+  .ring-text { flex: 1; }
+
+  .ring-text strong {
+    display: block;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .ring-text span {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* ============ 快捷按钮组 ============ */
+  .chip-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 13px 8px;
+    border-radius: 12px;
+    background: #f7f7fa;
+    border: 1px solid var(--line);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .chip:active {
+    background: var(--pink-pale);
+    border-color: var(--pink);
+    transform: scale(0.97);
+  }
+
+  .chip-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--pink);
+  }
+
+  /* ============ 底部翻页 ============ */
+  .pager {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 10px 18px calc(14px + env(safe-area-inset-bottom));
+    background: rgba(242,242,247,0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--line);
+  }
+
+  .arrow {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: var(--card);
+    color: var(--text2);
+    font-size: 17px;
+    display: grid; place-items: center;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .arrow:active { transform: scale(0.92); }
+  .arrow:disabled { opacity: 0.35; cursor: default; }
+
+  .dots {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .dot {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text2);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .dot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--pink);
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .dot span { position: relative; z-index: 1; }
+
+  .dot.active { color: #fff; }
+  .dot.active::before { opacity: 1; transform: scale(1); }
+
+  /* ============ 编辑提示 ============ */
+  .edit-hint {
+    margin: 0 14px 12px;
+    padding: 9px 14px;
+    border-radius: 10px;
+    background: var(--pink-pale);
+    color: var(--pink-deep);
+    font-size: 11.5px;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* ============ 移动端全屏 ============ */
+  @media (max-width: 480px) {
+    body { display: block; background: var(--bg); }
+    .app {
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- 顶栏 -->
+  <header class="topbar">
+    <button class="topbar-close" id="closeBtn" aria-label="关闭">✕</button>
+    <span class="page-indicator"><span id="curPage">1</span> / 6</span>
+  </header>
+
+  <!-- 页面容器 -->
+  <main class="viewport" id="viewport">
+
+    <!-- ============ 第 1 页：个人资料 ============ -->
+    <section class="page active" data-page="0">
+      <div class="card profile-card">
+        <div class="avatar" aria-hidden="true">
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="15,22 21,7 30,19" fill="#4a4a4a"/>
+            <polygon points="49,22 43,7 34,19" fill="#4a4a4a"/>
+            <circle cx="32" cy="33" r="17" fill="#5c5c5c"/>
+            <circle cx="25.5" cy="31" r="3.2" fill="#1c1c1e"/>
+            <circle cx="38.5" cy="31" r="3.2" fill="#1c1c1e"/>
+            <circle cx="26.5" cy="30" r="1" fill="#fff"/>
+            <circle cx="39.5" cy="30" r="1" fill="#fff"/>
+            <polygon points="32,37 29.8,39.2 34.2,39.2" fill="#f2a6c2"/>
+            <ellipse cx="32" cy="54" rx="14" ry="7" fill="#5c5c5c"/>
+            <ellipse cx="32" cy="42" rx="9" ry="5" fill="#6e6e6e"/>
+          </svg>
+        </div>
+        <div class="profile-info">
+          <div class="profile-name">k1ty</div>
+          <div class="profile-sub">Vivienne Pistols<br>Sevenstars</div>
+        </div>
+        <span class="profile-arrow" aria-hidden="true">›</span>
+      </div>
+
+      <div class="section-title">基本信息</div>
+      <div class="card">
+        <div class="info-row">
+          <span class="info-label">约会装扮</span>
+          <span class="info-value">耳坠正太</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">爱好</span>
+          <span class="info-value">爱美</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">属性</span>
+          <span class="info-value">21 · 双子 · 八无 · LEENFP</span>
+        </div>
+      </div>
+
+      <div class="section-title">个人简介</div>
+      <div class="card">
+        <div class="editable" contenteditable="true" data-placeholder="点击此处编辑个人简介...">喜欢甜甜恋爱的普通人，不喜剖析，也不喜欢被剖析。</div>
+      </div>
+
+      <div class="edit-hint">✎ 虚线区域可直接点击编辑</div>
+    </section>
+
+    <!-- ============ 第 2 页：Plan & 音乐 ============ -->
+    <section class="page" data-page="1">
+
+      <div class="section-title">Plan List</div>
+      <div class="plan-card">
+        <div class="plan-head">
+          <span class="plan-head-icon">♡</span>
+          <span class="plan-head-title">Plan List</span>
+        </div>
+        <div class="plan-item" data-plan>
+          <span class="plan-check">✓</span>
+          <span class="plan-text">Drink water</span>
+        </div>
+        <div class="plan-item" data-plan>
+          <span class="plan-check">✓</span>
+          <span class="plan-text">Read a book</span>
+        </div>
+        <div class="plan-item" data-plan>
+          <span class="plan-check">✓</span>
+          <span class="plan-text">Early to bed</span>
+        </div>
+      </div>
+
+      <div class="section-title">Now Playing</div>
+      <div class="music-card">
+        <div class="music-top">
+          <div class="record" id="record" aria-hidden="true">♪</div>
+          <div class="music-meta">
+            <div class="music-title">Cherry Wine</div>
+            <div class="music-sub" id="musicSub">1+520:1314 · 已暂停</div>
+          </div>
+        </div>
+        <div class="music-bar">
+          <div class="music-bar-fill" id="musicFill"></div>
+        </div>
+        <div class="music-controls">
+          <button class="m-btn" aria-label="上一首">⏮</button>
+          <button class="m-btn m-btn-play" id="playBtn" aria-label="播放">▶</button>
+          <button class="m-btn" aria-label="下一首">⏭</button>
+        </div>
+      </div>
+
+      <div class="section-title">悄悄话</div>
+      <div class="card">
+        <div class="editable" contenteditable="true" data-placeholder="点击编辑...">再过来点，我唱给你听。</div>
+      </div>
+      <div class="card">
+        <div class="editable" contenteditable="true" data-placeholder="点击编辑...">编你的，只想亲你。</div>
+      </div>
+
+      <div class="edit-hint">✎ 点击列表可勾选 · 点击播放键有动效</div>
+    </section>
+
+    <!-- ============ 第 3 页：邮件 & 语录 ============ -->
+    <section class="page" data-page="2">
+
+      <div class="section-title">新邮件提醒</div>
+      <div class="mail-item">
+        <div class="mail-icon" aria-hidden="true">✉</div>
+        <div class="mail-body">
+          <div class="mail-title">You got a new message</div>
+          <div class="mail-desc">Don't forget to smile today!</div>
+        </div>
+        <span class="mail-badge">1</span>
+      </div>
+
+      <div class="section-title">语录</div>
+      <div class="card">
+        <div class="quote-list">
+          <div class="quote-item"><div class="quote-text">此女最喜欢随单麦尾音上扬时我们靠得更近了，心也是</div></div>
+          <div class="quote-item"><div class="quote-text">邪恶要坏句引第一步：这位女士不好意思说话就先牵紧我吧</div></div>
+          <div class="quote-item"><div class="quote-text">再过来点，我唱给你听</div></div>
+          <div class="quote-item"><div class="quote-text">编你的，只想亲你</div></div>
+          <div class="quote-item"><div class="quote-text">真没找借口，借口不是</div></div>
+          <div class="quote-item"><div class="quote-text">把你借我亲一口吗</div></div>
+          <div class="quote-item"><div class="quote-text">Heaven has blessed me with a wonderful, wonderful you</div></div>
+        </div>
+      </div>
+
+      <div class="edit-hint">✎ 语录区域可整体点击编辑</div>
+    </section>
+
+    <!-- ============ 第 4 页：关系须知 ============ -->
+    <section class="page" data-page="3">
+
+      <div class="section-title">默认总人关系</div>
+      <div class="card">
+        <div class="notice-list">
+          <div class="notice-item"><span class="notice-dot"></span>婉拒男板 / 低态板 / 萌新板 / 低代入 / 单口半单口 / 不配合</div>
+          <div class="notice-item"><span class="notice-dot"></span>婉拒一恋多 / 旁现搭话 / 审视 / 熟人披马甲（别被我认出来）</div>
+          <div class="notice-item"><span class="notice-dot"></span>习惯回合制对话，偶尔可以，次数多了我会叫停退单</div>
+          <div class="notice-item"><span class="notice-dot"></span>严拒单内恶搞、接恶俗烂梗，接到永拒 + 避雷条</div>
+          <div class="notice-item"><span class="notice-dot"></span>别莫名对我有太大期待 / 幻想，我只是一个喜欢甜甜恋爱的普通人</div>
+          <div class="notice-item"><span class="notice-dot"></span>不喜剖析我，你也不要剖析我</div>
+          <div class="notice-item"><span class="notice-dot"></span>单内不看微信，有什么话直接单内说就可以</div>
+          <div class="notice-item"><span class="notice-dot"></span>不喜小窝，婉拒小窝（太社恐了，更喜欢二人世界）</div>
+          <div class="notice-item"><span class="notice-dot"></span>单后正常演好友</div>
+          <div class="notice-item"><span class="notice-dot"></span>期待见面</div>
+        </div>
+      </div>
+
+      <div class="section-title">补充说明</div>
+      <div class="card">
+        <div class="editable" contenteditable="true" data-placeholder="点击此处补充其他说明..."></div>
+      </div>
+
+      <div class="edit-hint">✎ 以上通知默认已读</div>
+    </section>
+
+    <!-- ============ 第 5 页：旋律 & 想做的事 ============ -->
+    <section class="page" data-page="4">
+
+      <div class="section-title">主旋律</div>
+      <div class="card">
+        <div class="melody-block">
+          <span class="melody-label">主旋律</span>
+          <div class="melody-content editable" contenteditable="true" data-placeholder="点击编辑主旋律...">白话日常挑逗恶趣味热脸钱<br>社畜淡淡人机 · 我一定要上班吗<br>发现说话的时候把眼睛闭上很舒服</div>
+        </div>
+      </div>
+
+      <div class="section-title">副旋律</div>
+      <div class="card">
+        <div class="melody-block">
+          <span class="melody-label">副旋律</span>
+          <div class="melody-content editable" contenteditable="true" data-placeholder="点击编辑副旋律...">轻浮做擦对抗路 deeptalk<br>偶尔掉落特别旋律</div>
+        </div>
+      </div>
+
+      <div class="section-title">想做的事</div>
+      <div class="card">
+        <div class="editable" contenteditable="true" data-placeholder="点击编辑...">只想和你做。</div>
+      </div>
+
+      <div class="edit-hint">✎ 每块旋律都可单独点击编辑</div>
+    </section>
+
+    <!-- ============ 第 6 页：状态 & 快捷入口 ============ -->
+    <section class="page" data-page="5">
+
+      <div class="section-title">关系状态</div>
+      <div class="card">
+        <div class="ring-wrap">
+          <div class="ring" aria-hidden="true"></div>
+          <div class="ring-text">
+            <strong>我们什么关系？蜜雪冰城吧</strong>
+            <span>520.1314_好 · 期待见面</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">快捷入口</div>
+      <div class="card">
+        <div class="chip-grid">
+          <button class="chip" type="button"><span class="chip-dot"></span>话术</button>
+          <button class="chip" type="button"><span class="chip-dot"></span>板课</button>
+          <button class="chip" type="button"><span class="chip-dot"></span>主类</button>
+          <button class="chip" type="button"><span class="chip-dot"></span>接班表</button>
+        </div>
+      </div>
+
+      <div class="section-title">备注</div>
+      <div class="card">
+        <div class="editable" contenteditable="true" data-placeholder="点击此处记录备注...">感恩自己，鸣谢自己，成功句引到很好很好的你。</div>
+      </div>
+
+      <div class="edit-hint">✎ 点击按钮会有按压反馈</div>
+    </section>
+
+  </main>
+
+  <!-- 底部翻页 -->
+  <nav class="pager">
+    <button class="arrow" id="prevBtn" aria-label="上一页">‹</button>
+    <div class="dots" id="dots">
+      <button class="dot active" data-target="0"><span>1</span></button>
+      <button class="dot" data-target="1"><span>2</span></button>
+      <button class="dot" data-target="2"><span>3</span></button>
+      <button class="dot" data-target="3"><span>4</span></button>
+      <button class="dot" data-target="4"><span>5</span></button>
+      <button class="dot" data-target="5"><span>6</span></button>
+    </div>
+    <button class="arrow" id="nextBtn" aria-label="下一页">›</button>
+  </nav>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============ 分页切换 ============ */
+  var pages = document.querySelectorAll(".page");
+  var dots = document.querySelectorAll(".dot");
+  var viewport = document.getElementById("viewport");
+  var curPageEl = document.getElementById("curPage");
+  var prevBtn = document.getElementById("prevBtn");
+  var nextBtn = document.getElementById("nextBtn");
+  var total = pages.length;
+  var current = 0;
+
+  function goTo(index) {
+    if (index < 0) index = 0;
+    if (index > total - 1) index = total - 1;
+    if (index === current) return;
+
+    pages[current].classList.remove("active");
+    dots[current].classList.remove("active");
+
+    current = index;
+
+    pages[current].classList.add("active");
+    dots[current].classList.add("active");
+
+    curPageEl.textContent = current + 1;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+
+    viewport.scrollTop = 0;
+  }
+
+  dots.forEach(function (dot) {
+    dot.addEventListener("click", function () {
+      goTo(parseInt(dot.dataset.target, 10));
+    });
+  });
+
+  prevBtn.addEventListener("click", function () { goTo(current - 1); });
+  nextBtn.addEventListener("click", function () { goTo(current + 1); });
+
+  prevBtn.disabled = true;
+
+  /* 键盘左右键切换 */
+  document.addEventListener("keydown", function (e) {
+    var tag = (e.target.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea" || e.target.isContentEditable) return;
+    if (e.key === "ArrowLeft") goTo(current - 1);
+    if (e.key === "ArrowRight") goTo(current + 1);
+  });
+
+  /* 移动端左右滑动切换 */
+  var touchStartX = 0;
+  var touchStartY = 0;
+  var touchMoved = false;
+
+  viewport.addEventListener("touchstart", function (e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchMoved = false;
+  }, { passive: true });
+
+  viewport.addEventListener("touchmove", function () {
+    touchMoved = true;
+  }, { passive: true });
+
+  viewport.addEventListener("touchend", function (e) {
+    if (!touchMoved) return;
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    var dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      if (dx < 0) goTo(current + 1);
+      else goTo(current - 1);
+    }
+  }, { passive: true });
+
+  /* ============ Plan 勾选 ============ */
+  document.querySelectorAll("[data-plan]").forEach(function (item) {
+    item.addEventListener("click", function () {
+      item.classList.toggle("done");
+    });
+  });
+
+  /* ============ 音乐播放模拟 ============ */
+  var playBtn = document.getElementById("playBtn");
+  var record = document.getElementById("record");
+  var musicFill = document.getElementById("musicFill");
+  var musicSub = document.getElementById("musicSub");
+  var isPlaying = false;
+  var progress = 0;
+  var timer = null;
+
+  function renderMusic() {
+    musicFill.style.width = progress + "%";
+    musicSub.textContent = isPlaying
+      ? "1+520:1314 · 正在播放"
+      : "1+520:1314 · 已暂停";
+  }
+
+  playBtn.addEventListener("click", function () {
+    isPlaying = !isPlaying;
+
+    if (isPlaying) {
+      playBtn.textContent = "⏸";
+      playBtn.setAttribute("aria-label", "暂停");
+      record.classList.add("playing");
+
+      timer = setInterval(function () {
+        progress += 0.35;
+        if (progress >= 100) progress = 0;
+        musicFill.style.width = progress + "%";
+      }, 100);
+    } else {
+      playBtn.textContent = "▶";
+      playBtn.setAttribute("aria-label", "播放");
+      record.classList.remove("playing");
+      clearInterval(timer);
+      timer = null;
+    }
+    renderMusic();
+  });
+
+  renderMusic();
+
+  /* ============ 关闭按钮（回首页） ============ */
+  document.getElementById("closeBtn").addEventListener("click", function () {
+    goTo(0);
+  });
+
+})();
+</script>
+
+</body>
+</html>
